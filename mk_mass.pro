@@ -10,6 +10,8 @@
 ;                                   /oned,/silent)
 ;
 ; INPUTS:
+;          All input must be scalars
+;
 ;          K:     2MASS Ks-band (magnitudes)
 ;          dist:  distance (parsecs)
 ;          ek:    error on K (magnitudes). If not provided assumed to be 0
@@ -20,12 +22,14 @@
 ;                Mk-Mass-[Fe/H] relation instead
 ;          efeh: error on iron abundance (dex). If not provided, but feh
 ;                is provied, assumed to be 0
-;
+;          post: MCMC posterior. Will read it in if not provided. This is
+;                useful if you need to run a lot of values (so it does not
+;                need to be read in many times). 
 ;
 ; KEYWORD PARAMETERS:
 ;          oned:  Returns a simple 1D error instead of a posterior
 ;
-;          silent: surpress the many warnings
+;          silent: surpress the many (annoying) warnings
 ;
 ; OUTPUTS:
 ;          mass: if /oned is set this is a 2-element array containing the
@@ -34,7 +38,12 @@
 ;
 ; EXAMPLE:
 ;    Create a color table of only greens and plot to the screen
-;          IDL> 
+;          IDL>
+;    If you have a posterior on K and distance instead of 1D errors
+;          IDL> post = mrdfits('',/silent)
+;          IDL> mass = []
+;          IDL> for i = 0,n_elements(k)-1 do mass = [mass,mk_mass(k[i],dist[i],0d0,0d0,post=post)]
+;          IDL> cghistoplot,mass,/outline
 ;
 ; MODIFICATION HISTORY:
 ;          May 10 2018: Ported from scratch code by A. Mann
@@ -44,51 +53,46 @@
 ;
 ;-
 
-function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,silent=silent
+function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent
 
   if n_elements(silent) eq 0 then silent = 0
   if n_elements(ek) eq 0 then begin
      if silent eq 0 then print,'Warning, assuming no error on K, mass errors underestimated'
-     ek = 0d0*k
+     ek = 0d0
   endif
   if n_elements(edist) eq 0 then begin
      if silent eq 0 then print,'Warning, assuming no error on distance, mass errors underestimated'
-     edist = 0d0*k
+     edist = 0d0
   endif
   if n_elements(efeh) eq 0 and n_elements(feh) gt 0 then begin
      if silent eq 0 then print,'Warning, assuming no error on [Fe/H], mass errors underestimated'
-     efeh = 0d0*feh
+     efeh = 0d0
   endif
-  if n_elements(k) lt 1 or n_elements(ek) lt 1 or n_elements(dist) lt 1 or n_Elements(edist) lt 1 or n_elements(k) ne n_elements(ek) or n_elements(dist) ne n_elements(edist) or n_elements(k) ne n_elements(dist) or n_elements(feh) ne n_elements(efeh) then begin
+  if n_elements(k) ne 1 or n_elements(ek) ne 1 or n_elements(dist) ne 1 or n_Elements(edist) ne 1 then begin
      if silent eq 0 then print,'mk_mass,kmag,ekmag,distance,dist_err; all input must be the same size'
      return,-1
   endif
-  if n_elements(feh) gt 0 and n_elements(feh) ne n_elements(k) then begin
+  if n_elements(feh) gt 0 and (n_elements(feh) ne 1 or n_elements(efeh) ne 1) then begin
      if silent eq 0 then print,'If [Fe/H] is provided as an array, it must have the same size as other parameters'
      return,-1
   endif
 
-  ;; this needs to be able to handle a few different scenarios:
-  ;; 1) the input values are scalars
-  ;; 2) the input values are vectors, smaller than the posteriors on Mk-Mass (truncate ours randomly)
-  ;; 3) the input values are vectors, larger than the posteriors on Mk-Mass (expand ours to match)
-  
-  mcmc = mrdfits('~/Dropbox/Post_ML/Mk-M_5_chain.fits',/silent)
-  x = mcmc
-  ntot = n_elements(x[0,*,*])
-  a = reform(x[0,*,*],ntot)
-  b = reform(x[1,*,*],ntot)
-  c = reform(x[2,*,*],ntot)
-  d = reform(x[3,*,*],ntot)
-  e = reform(x[4,*,*],ntot)
-  m = dblarr(n_elements(k))
-  if n_elements(k) eq 1 then begin
-     kmag = k+ek*randomn(seed,n_elements(a))
-     distance = dist + edist*randomn(seed,n_elements(a))
-     mk = kmag-5d0*(alog10(distance)-1d0)
-     mass = 10d0^(a+b*(mk-7.5d0)+c*(mk-7.5d0)^2d0+d*(mk-7.5d0)^3d0+e*(mk-7.5d0)^4d0)
-     m = mass
+  if n_elements(post) eq 0 then begin
+     post = mrdfits('~/Dropbox/Post_ML/Mk-M_5_chain.fits',/silent)
   endif
+  ntot = n_elements(post[0,*,*])
+  a = reform(post[0,*,*],ntot)
+  b = reform(post[1,*,*],ntot)
+  c = reform(post[2,*,*],ntot)
+  d = reform(post[3,*,*],ntot)
+  e = reform(post[4,*,*],ntot)
+  m = dblarr(n_elements(k))
+  kmag = k+ek*randomn(seed,n_elements(a))
+  distance = dist + edist*randomn(seed,n_elements(a))
+  mk = kmag-5d0*(alog10(distance)-1d0)
+  zp = 7.5d0
+  mass = 10d0^(a+b*(mk-zp)+c*(mk-zp)^2d0+d*(mk-zp)^3d0+e*(mk-zp)^4d0)
+  m = mass
   return,m
   
 end
