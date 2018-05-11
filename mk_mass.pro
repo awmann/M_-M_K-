@@ -78,7 +78,8 @@ function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent
   endif
 
   if n_elements(post) eq 0 then begin
-     post = mrdfits('~/Dropbox/Post_ML/Mk-M_5_chain.fits',/silent)
+     if n_elements(feh) ne 0 then post = mrdfits('Mk-M_5_feh_trim.fits',/silent) else $
+        post = mrdfits('Mk-M_5_trim.fits',/silent)
   endif
   ntot = n_elements(post[0,*,*])
   a = reform(post[0,*,*],ntot)
