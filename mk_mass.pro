@@ -129,12 +129,11 @@ PRO tester
   dist = 12.136
   edist = 0.118
   mass = mk_mass(k,dist,ek,edist)
-  cghistoplot,mass,/outline,thick=3
   print,'Trappist-1:'
   print,'Our mass:'+String(median(mass),format="(D6.3)")+'+/-'+string(stdev(mass),format="(D6.3)")
   print,'Van Grootel et al: 0.089+/-0.006'
   mVG = 0.089+0.006*randomn(seed,n_elements(mass))
-  cghistoplot,mass,/outline,thick=3,datacolorname='red',binsize=0.0001
+  cghistoplot,mass,/outline,thick=3,datacolorname='red',binsize=0.0001,xtitle='Mass (Solar)'
   cghistoplot,mVG,/outline,thick=3,datacolorname='blue',/oplot,binsize=0.0001
   legend,['Our Mass','Van Grootel et al.'],color=cgcolor(['red','blue']),linestyle=0,thick=3,/top,/left,textcolor=cgcolor(['red','blue'])
   print,'Diff = '+string(median(mass-mVG),format="(D6.3)")
@@ -147,16 +146,23 @@ PRO tester
   ek = 0.02
   dist = 14.55
   edist = 0.13
+  feh = 0.30
+  efeh = 0.10
   mass = mk_mass(k,dist,ek,edist)
-  print,'Trappist-1:'
+  mass_feh = mk_mass(k,dist,ek,edist,feh=feh,efeh=efeh)
+  print,'GJ1214:'
   print,'Our mass:'+String(median(mass),format="(D6.3)")+'+/-'+string(stdev(mass),format="(D6.3)")
+  print,'Our mass (with [Fe/H]):'+String(median(mass_feh),format="(D6.3)")+'+/-'+string(stdev(mass_feh),format="(D6.3)")
   print,'Anglada-Escudé: 0.176+/-0.009'
   mAE = 0.176+0.009*randomn(seed,n_elementS(mass))
-  cghistoplot,mass,/outline,thick=3,datacolorname='red',binsize=0.0001
+  cghistoplot,mass,/outline,thick=3,datacolorname='red',binsize=0.0001,xtitle='Mass (Solar)'
+  cghistoplot,mass_feh,/outline,thick=3,datacolorname='orange',binsize=0.0001,/oplot
   cghistoplot,mAE,/outline,thick=3,datacolorname='blue',/oplot,binsize=0.0001
-  legend,['Our Mass','Anglada-Escude et al.'],color=cgcolor(['red','blue']),linestyle=0,thick=3,/top,/right,textcolor=cgcolor(['red','blue'])
+  legend,['Our Mass','Our Mass with [Fe/H]','Anglada-Escude et al.'],color=cgcolor(['red','orange','blue']),linestyle=0,thick=3,/top,/right,textcolor=cgcolor(['red','orange','blue'])
   print,'Diff = '+string(median(mass-mAE),format="(D6.3)")
   print,'Sig = '+string(mean(mass-mAE)/stdev(mass-mAE),format="(D6.3)")
+  print,'Diff(feh) = '+string(median(mass_feh-mAE),format="(D6.3)")
+  print,'Sig(feh = '+string(mean(mass_feh-mAE)/stdev(mass_Feh-mAE),format="(D6.3)")
 
   ;;stop
   ;; GU Boo
@@ -180,13 +186,15 @@ PRO tester
   print,'M_B = 0.600+/-0.006 (Lopez-Morales & Ribas (2005))'
   Ma = 0.616+0.006*randomn(seed,n_elementS(mass))
   Mb = 0.600+0.006*randomn(seed,n_elementS(mass))
-  cghistoplot,mass_a,/outline,thick=3,datacolorname='red',binsize=0.0001
+  cghistoplot,mass_a,/outline,thick=3,datacolorname='red',binsize=0.0001,xtitle='Mass (Solar)'
   cghistoplot,mass_b,/outline,thick=3,datacolorname='orange',binsize=0.0001,/oplot
   cghistoplot,Ma,/outline,thick=3,datacolorname='blue',/oplot,binsize=0.0001
   cghistoplot,Mb,/outline,thick=3,datacolorname='violet',/oplot,binsize=0.0001
   legend,['Our A','Our B','LR05 A','LR05 B'],color=cgcolor(['red','orange','blue','violet']),linestyle=0,thick=3,/top,/right,textcolor=cgcolor(['red','orange','blue','violet'])
   print,'Diff = '+string(median(mass_a-ma),format="(D6.3)")+', '+string(median(mass_b-mb),format="(D6.3)")
   print,'Sig = '+string(mean(mass_a-ma)/stdev(mass_a-ma),format="(D6.3)")+', '+string(mean(mass_b-mb)/stdev(mass_b-mb),format="(D6.3)")
+
+
   
   ;; Let's say we have some assymetric posterior on distance, and want a posterior on mass
   ;; note this runs really slowly. Maybe not so practical!
@@ -194,7 +202,7 @@ PRO tester
   tmp = findgen(n_elements(post[0,*]))
   l = wherE(tmp mod 100 eq 1)
   post = post[*,l] ;; runs a bit faster if you trim this down.
-  num = 1d4
+  num = 1d3
   logdist = generatearray(1.15,1.3,num)
   dist = 10.0^logdist
   k = 8.0+0.01*randomn(seed,num)
@@ -212,7 +220,7 @@ PRO tester
      ;;   print,(systime(/seconds)-start)/i,n_elements(mass)
      ;;endif
   endfor
-  cghistoplot,mass,/outline,thick=3 ;; assymetric distribution in mass, as expected
+  cghistoplot,mass,/outline,thick=3,xtitle='Mass (Solar)' ;; assymetric distribution in mass, as expected
   
 END
 
