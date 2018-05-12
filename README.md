@@ -12,17 +12,11 @@ Check out the paper:
 https://github.com/awmann/masses_paper
 
 Let's say you want to know the mass of Trappist-1:
-
 k = 10.296 
-
 ek = 0.023
-
 dist = 12.136
-
 edist = 0.118
-
 mass = mk_mass(k,dist,ek,edist)
-
 print,'The mass of Trappist-1 is '+String(median(mass),format="(D6.3)")+'+/-'+string(stdev(mass),format="(D6.3)")+' M_sun'
 
 cghistoplot,mass,/outline,thick=4,xtitle='Mass (Solar masses)'
