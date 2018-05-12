@@ -12,6 +12,7 @@ Check out the paper:
 https://github.com/awmann/masses_paper
 
 Let's say you want to know the mass of Trappist-1:
+```
 k = 10.296 
 ek = 0.023
 dist = 12.136
@@ -22,8 +23,9 @@ print,'The mass of Trappist-1 is '+String(median(mass),format="(D6.3)")+'+/-'+st
 cghistoplot,mass,/outline,thick=4,xtitle='Mass (Solar masses)'
   
   "The mass of Trappist-1 is  0.089+/- 0.004 M_sun"
-  
+```
   ![Histogram of the posterior](img/trappist_mass.png)
+
 
 
 The success of the associated paper depends on the ease of use of this software, so please feel free to send questions/suggestions to mann.andrew.w [at] gmail.com (or open an issue). 
