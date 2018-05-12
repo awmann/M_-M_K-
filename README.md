@@ -10,7 +10,8 @@ Let's say you want to know the mass of Trappist-1:
   mass = mk_mass(k,dist,ek,edist)
   print,'The mass of Trappist-1 is '+String(median(mass),format="(D6.3)")+'+/-'+string(stdev(mass),format="(D6.3)")+' M_sun'
   cghistoplot,mass,/outline,thick=4,xtitle='Mass (Solar masses)'
-  [Histogram of the posterior](trappist_mass.png)
+  
+  ![Histogram of the posterior](img/trappist_mass.png)
 
 The code will read in the included posterior from Mann et al. (soon, be patient) to estimate the error arising from scatter in the relation itself. The output is a posterior on stellar mass (Solar units). You can also request 1D (mean and sigma) errors if those are preferred.
 
