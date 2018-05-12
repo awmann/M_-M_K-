@@ -8,6 +8,9 @@ You can include [Fe/H] if it is known. In this scenario the code will use a Mk-M
 
 The code requires scalar values for K, distance, and corresponding uncertainties. If you instead of a set of values (e.g., an asymmetric or otherwise non-Gaussian posterior on distance) the suggested solution is to read in the posterior and run the code on each point separately, and then combine the resulting posteriors on mass.
 
+Check out the paper:
+https://github.com/awmann/masses_paper
+
 Example:
 Let's say you want to know the mass of Trappist-1:
 k = 10.296 
@@ -19,13 +22,12 @@ print,'The mass of Trappist-1 is '+String(median(mass),format="(D6.3)")+'+/-'+st
 cghistoplot,mass,/outline,thick=4,xtitle='Mass (Solar masses)'
   
   "The mass of Trappist-1 is  0.089+/- 0.004 M_sun"
-  ![Histogram of the posterior](img/trappist_mass.png | width=200)
+  
+  ![Histogram of the posterior](img/trappist_mass.png)
 
 
 The success of the associated paper depends on the ease of use of this software, so please feel free to send questions/suggestions to mann.andrew.w [at] gmail.com (or open an issue). 
 
-Check out the paper:
-https://github.com/awmann/masses_paper
 
 The code is available in IDL, but I promise to make a python version soon (under some sufficiently vague definition of soon). 
  
