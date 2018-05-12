@@ -48,6 +48,7 @@
 ;
 ; MODIFICATION HISTORY:
 ;          May 10 2018: Ported from scratch code by A. Mann
+;          May 14 2018: Added testing modules. A. Mann
 ;         
 ;
 ;If you use this code, please cite the relevant paper:
@@ -128,28 +129,87 @@ PRO tester
   print,'Our mass:'+String(median(mass),format="(D6.3)")+'+/-'+string(stdev(mass),format="(D6.3)")
   print,'Van Grootel et al: 0.089+/-0.006'
   mVG = 0.089+0.006*randomn(seed,n_elements(mass))
-  cghistoplot,mass-mVG,/outline,thick=3
-  print,median(mass-mVG),stdev(mass-mVG),median(mass-mVG)/stdev(mass-mVG)
+  cghistoplot,mass,/outline,thick=3,datacolorname='red',binsize=0.0001
+  cghistoplot,mVG,/outline,thick=3,datacolorname='blue',/oplot,binsize=0.0001
+  legend,['Our Mass','Van Grootel et al.'],color=cgcolor(['red','blue']),linestyle=0,thick=3,/top,/left,textcolor=cgcolor(['red','blue'])
+  print,'Diff = '+string(median(mass-mVG),format="(D6.3)")
+  print,'Sig = '+string(mean(mass-mVG)/stdev(mass-mVG),format="(D6.3)")
 
+  ;;stop
+  
   ;;GJ1214
   k = 8.782
   ek = 0.02
   dist = 14.55
   edist = 0.13
   mass = mk_mass(k,dist,ek,edist)
-  print,median(mass),stdev(mass)
+  print,'Trappist-1:'
+  print,'Our mass:'+String(median(mass),format="(D6.3)")+'+/-'+string(stdev(mass),format="(D6.3)")
+  print,'Anglada-Escudé: 0.176+/-0.009'
   mAE = 0.176+0.009*randomn(seed,n_elementS(mass))
-  cghistoplot,mass-mAE,/outline,thick=3
-  print,median(mass-mAE),stdev(mass-mAE),median(mass-mAE)/stdev(mass-mAE)
+  cghistoplot,mass,/outline,thick=3,datacolorname='red',binsize=0.0001
+  cghistoplot,mAE,/outline,thick=3,datacolorname='blue',/oplot,binsize=0.0001
+  legend,['Our Mass','Anglada-Escude et al.'],color=cgcolor(['red','blue']),linestyle=0,thick=3,/top,/right,textcolor=cgcolor(['red','blue'])
+  print,'Diff = '+string(median(mass-mAE),format="(D6.3)")
+  print,'Sig = '+string(mean(mass-mAE)/stdev(mass-mAE),format="(D6.3)")
 
+  ;;stop
+  ;; GU Boo
+  ;; this is an EB with near equal-mass components, so we can roughly assume DeltaK ~ 0.1
+  ;; has a gaia plx
+  dist = 1000d0/6.1468
+  edist = (0.0159/6.1468)*dist
+  ktot = 10.222
+  delk = 0.1
+  fluxratio = 10d0^(0.05/2.5)
+  del_eps = 2.5*alog10(1d0+1d0/fluxratio)
+  ka = del_eps+ktot
+  kb = ka + delk
+  ek = 0.021
+  mass_a = mk_mass(ka,dist,ek,edist)
+  mass_b = mk_mass(kb,dist,ek,edist)
+  print,'GU Boo:'
+  print,'Our mass (A):'+String(median(mass_a),format="(D6.3)")+'+/-'+string(stdev(mass_a),format="(D6.3)")
+  print,'Our mass (B):'+String(median(mass_b),format="(D6.3)")+'+/-'+string(stdev(mass_b),format="(D6.3)")
+  print,'M_A = 0.616+/-0.006 (Lopez-Morales & Ribas (2005))'
+  print,'M_B = 0.600+/-0.006 (Lopez-Morales & Ribas (2005))'
+  Ma = 0.616+0.006*randomn(seed,n_elementS(mass))
+  Mb = 0.600+0.006*randomn(seed,n_elementS(mass))
+  cghistoplot,mass_a,/outline,thick=3,datacolorname='red',binsize=0.0001
+  cghistoplot,mass_b,/outline,thick=3,datacolorname='orange',binsize=0.0001,/oplot
+  cghistoplot,Ma,/outline,thick=3,datacolorname='blue',/oplot,binsize=0.0001
+  cghistoplot,Mb,/outline,thick=3,datacolorname='violet',/oplot,binsize=0.0001
+  legend,['Our A','Our B','LR05 A','LR05 B'],color=cgcolor(['red','orange','blue','violet']),linestyle=0,thick=3,/top,/right,textcolor=cgcolor(['red','orange','blue','violet'])
+  print,'Diff = '+string(median(mass_a-ma),format="(D6.3)")+', '+string(median(mass_b-mb),format="(D6.3)")
+  print,'Sig = '+string(mean(mass_a-ma)/stdev(mass_a-ma),format="(D6.3)")+', '+string(mean(mass_b-mb)/stdev(mass_b-mb),format="(D6.3)")
+
+  stop
+  
   ;; Let's say we have some assymetric posterior on distance, and want a posterior on mass
+  ;; note this runs really slowly. Maybe not so practical!
   post = mrdfits('Mk-M_5_trim.fits',/silent)
-  num = 1d5
+  tmp = findgen(n_elements(post[0,*]))
+  l = wherE(tmp mod 100 eq 1)
+  post = post[*,l] ;; runs a bit faster if you trim this down.
+  num = 1d4
   logdist = generatearray(1.15,1.3,num)
   dist = 10.0^logdist
   k = 8.0+0.01*randomn(seed,num)
   mass = []
-  for i = 0,num-1 do mass = [mass,mk_mass(k[i],dist[i],0d0,0d0,post=post)]
+  start = systime(/seconds)
+  for i = 0,num-1 do begin
+     m = mk_mass(k[i],dist[i],0d0,0d0,post=post)
+     ;; select a random 1 out of 100
+     m = shuffle(m)
+     tmp = findgen(n_elements(m))
+     l = where(tmp mod 100 eq 5)
+     mass = [mass,m[l]]
+     ;;mass = [mass,m]
+     if i mod 1000 eq 500 then begin
+        print,(systime(/seconds)-start)/i,n_elements(mass)
+        cghistoplot,mass,/outline,thick=4
+     endif
+  endfor
   cghistoplot,mass,/outline,thick=3
   
   stop
