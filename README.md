@@ -17,13 +17,13 @@ Let's say you want to know the mass of Trappist-1:
 ```
 k = 10.296 
 ek = 0.023
-dist = 12.136
-edist = 0.118
+dist = 1000d0/80.4512 ;; Gaia DR2 parallax
+edist = (0.1211/80.4512)*dist
 mass = mk_mass(k,dist,ek,edist)
-print,'The mass of Trappist-1 is '+String(median(mass),format="(D6.3)")+'+/-'+string(stdev(mass),format="(D6.3)")+' M_sun'
+print,'The mass of Trappist-1 is '+String(median(mass),format="(D6.4)")+'+/-'+string(stdev(mass),format="(D6.4)")+' M_sun'
 cghistoplot,mass,/outline,thick=4,xtitle='Mass (Solar masses)'
   
-  "The mass of Trappist-1 is  0.089+/- 0.004 M_sun"
+  "The mass of Trappist-1 is  0.0903+/- 0.0039 M_sun"
 ```
   ![Histogram of the posterior](img/trappist_mass.png)
 

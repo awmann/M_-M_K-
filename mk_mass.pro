@@ -126,8 +126,10 @@ PRO tester
 ;; trappist-1
   k = 10.296
   ek = 0.023
-  dist = 12.136
-  edist = 0.118
+  ;;dist = 12.136
+  ;;edist = 0.118
+  dist = 12.42989539 ;; Gaia DR2 parallax
+  edist = 0.018710230
   mass = mk_mass(k,dist,ek,edist)
   print,'Trappist-1:'
   print,'Our mass:'+String(median(mass),format="(D6.3)")+'+/-'+string(stdev(mass),format="(D6.3)")
