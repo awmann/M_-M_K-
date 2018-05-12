@@ -37,9 +37,14 @@
 ;                this contains the posterior on mass of 1600000
 ;                elements (the length of the trimmed posterior). 
 ;
-; EXAMPLE:
-;    Create a color table of only greens and plot to the screen
-;          IDL>
+; EXAMPLE (see tester below for more examples):
+;    Typical case
+;          IDL> k = 8.782
+;          IDL> ek = 0.02
+;          IDL> dist = 14.55
+;          IDL> edist = 0.13
+;          IDL> mass = mk_mass(k,dist,ek,edist)
+;          IDL> print,median(mass),stdev(mass)
 ;    If you have a posterior on K and distance instead of 1D errors
 ;          IDL> post = mrdfits('',/silent)
 ;          IDL> mass = []
@@ -182,8 +187,6 @@ PRO tester
   legend,['Our A','Our B','LR05 A','LR05 B'],color=cgcolor(['red','orange','blue','violet']),linestyle=0,thick=3,/top,/right,textcolor=cgcolor(['red','orange','blue','violet'])
   print,'Diff = '+string(median(mass_a-ma),format="(D6.3)")+', '+string(median(mass_b-mb),format="(D6.3)")
   print,'Sig = '+string(mean(mass_a-ma)/stdev(mass_a-ma),format="(D6.3)")+', '+string(mean(mass_b-mb)/stdev(mass_b-mb),format="(D6.3)")
-
-  stop
   
   ;; Let's say we have some assymetric posterior on distance, and want a posterior on mass
   ;; note this runs really slowly. Maybe not so practical!
@@ -202,18 +205,15 @@ PRO tester
      ;; select a random 1 out of 100
      m = shuffle(m)
      tmp = findgen(n_elements(m))
-     l = where(tmp mod 100 eq 5)
+     l = where(tmp mod 100 eq 5) ;; just trimming for speed. 
      mass = [mass,m[l]]
      ;;mass = [mass,m]
-     if i mod 1000 eq 500 then begin
-        print,(systime(/seconds)-start)/i,n_elements(mass)
-        cghistoplot,mass,/outline,thick=4
-     endif
+     ;;if i mod 1000 eq 500 then begin
+     ;;   print,(systime(/seconds)-start)/i,n_elements(mass)
+     ;;endif
   endfor
-  cghistoplot,mass,/outline,thick=3
+  cghistoplot,mass,/outline,thick=3 ;; assymetric distribution in mass, as expected
   
-  stop
-
 END
 
 
