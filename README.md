@@ -2,6 +2,16 @@
 
 This code is meant to provide realistic masses and uncertainties of M dwarfs given a user-provided 2MASS K and distance (and uncertainties). 
 
+Let's say you want to know the mass of Trappist-1:
+  k = 10.296
+  ek = 0.023
+  dist = 12.136
+  edist = 0.118
+  mass = mk_mass(k,dist,ek,edist)
+  print,'The mass of Trappist-1 is '+String(median(mass),format="(D6.3)")+'+/-'+string(stdev(mass),format="(D6.3)")+' M_sun'
+  cghistoplot,mass,/outline,thick=4,xtitle='Mass (Solar masses)'
+  [Histogram of the posterior](trappist_mass.png)
+
 The code will read in the included posterior from Mann et al. (soon, be patient) to estimate the error arising from scatter in the relation itself. The output is a posterior on stellar mass (Solar units). You can also request 1D (mean and sigma) errors if those are preferred.
 
 You can include [Fe/H] if it is known. In this scenario the code will use a Mk-Mass-[Fe/H] relation. Note that the [Fe/H] term is technically not statistically significant. So this is mostly for illustrative purposes or tests on stars with extreme metallicities (e.g., subdwarfs). 
