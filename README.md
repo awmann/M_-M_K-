@@ -17,10 +17,11 @@ The code is available in IDL and python.
 
 To install the python version do the following after cloning the repository:
 
-cd to the cloned repository directoy
+cd to the cloned repository directory
+```
 python setup.py build
 python setup.py install
-
+```
 you should then be able to import mk_mass whenever you like. 
 
 Let's say you want to know the mass of Trappist-1 (IDL syntax):
