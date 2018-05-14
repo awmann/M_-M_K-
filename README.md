@@ -16,13 +16,25 @@ https://github.com/awmann/masses_paper
 The code is available in IDL and python.
 
 To install the python version:
-```
 git clone https://github.com/awmann/M_-M_K-
 cd M_-M_K-/
 python setup.py build
 python setup.py install
+'import mk_mass'
+
+Maybe you want to know the mass of GJ1214 (python syntax):
 ```
-you should then be able to 'import mk_mass' whenever you like. 
+import numpy as np
+from mk_mass import posterior
+k,ek  = 8.782,0.02
+dist  = 14.55
+edist = 0.13
+feh,efeh=0.3,0.1
+mass      = posterior(k,dist,ek,edist)
+mass_feh  = posterior(k,dist,ek,edist,feh,efeh)
+print np.median(mass),np.std(mass)
+	0.180854501624 0.00615326324807
+```
 
 Let's say you want to know the mass of Trappist-1 (IDL syntax):
 ```
