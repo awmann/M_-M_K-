@@ -32,5 +32,15 @@ cghistoplot,mass,/outline,thick=4,xtitle='Mass (Solar masses)'
 The success of the associated paper depends on the ease of use of this software, so please feel free to send questions/suggestions to mann.andrew.w [at] gmail.com (or open an issue). 
 
 
-The code is available in IDL, but I promise to make a python version soon (under some sufficiently vague definition of soon). 
+The code is available in IDL and python.
+
+To install the python version do the following after cloning the repository:
+
+cd to the cloned repository directoy
+python setup.py build
+python setup.py install
+
+you should then be able to import mk_mass whenever you like
+
+
  

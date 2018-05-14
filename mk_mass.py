@@ -1,6 +1,8 @@
 import numpy as np
-
-
+import pkg_resources
+from astropy.io import fits
+##figure out where the big fits files are in this installation
+datapath = pkg_resources.resource_filename('mk_mass','resources')
 
 def posterior(K,dist,ek=0.0,edist=0.0,feh=None,efeh=None,oned=False,silent=False,post=None): 
     '''
@@ -102,10 +104,9 @@ def posterior(K,dist,ek=0.0,edist=0.0,feh=None,efeh=None,oned=False,silent=False
 
     ##Unpack the relation
     if post == None:
-        from astropy.io import fits
-        if feh != None: 
-            post = fits.open('Mk-M_5_feh_trim.fits')[0].data
-        else: post = fits.open('Mk-M_5_trim.fits')[0].data
+        if feh != None:
+            post = fits.open(datapath +'/Mk-M_5_feh_trim.fits')[0].data
+        else: post = fits.open(datapath +'/Mk-M_5_trim.fits')[0].data
     ntot = post.shape[0]
     a    = post[:,0]
     b    = post[:,1]

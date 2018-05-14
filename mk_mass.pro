@@ -86,8 +86,8 @@ function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=
   endif
 
   if n_elements(post) eq 0 then begin
-     if n_elements(feh) ne 0 then post = mrdfits('Mk-M_5_feh_trim.fits',/silent) else $
-        post = mrdfits('Mk-M_5_trim.fits',/silent)
+     if n_elements(feh) ne 0 then post = mrdfits('resources/Mk-M_5_feh_trim.fits',/silent) else $
+        post = mrdfits('resources/Mk-M_5_trim.fits',/silent)
   endif
   ntot = n_elements(post[0,*])
   a = (post[0,*])[*]
@@ -200,7 +200,7 @@ PRO tester
   
   ;; Let's say we have some assymetric posterior on distance, and want a posterior on mass
   ;; note this runs really slowly. Maybe not so practical!
-  post = mrdfits('Mk-M_5_trim.fits',/silent)
+  post = mrdfits('resources/Mk-M_5_trim.fits',/silent)
   tmp = findgen(n_elements(post[0,*]))
   l = wherE(tmp mod 100 eq 1)
   post = post[*,l] ;; runs a bit faster if you trim this down.
