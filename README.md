@@ -15,14 +15,14 @@ https://github.com/awmann/masses_paper
 
 The code is available in IDL and python.
 
-To install the python version do the following after cloning the repository:
-
-cd to the cloned repository directory
+To install the python version:
 ```
+git clone https://github.com/awmann/M_-M_K-
+cd M_-M_K-/
 python setup.py build
 python setup.py install
 ```
-you should then be able to import mk_mass whenever you like. 
+you should then be able to 'import mk_mass' whenever you like. 
 
 Let's say you want to know the mass of Trappist-1 (IDL syntax):
 ```
