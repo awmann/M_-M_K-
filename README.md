@@ -15,12 +15,11 @@ https://github.com/awmann/masses_paper
 
 The code is available in IDL and python.
 
-To install the python version:
-git clone https://github.com/awmann/M_-M_K-
-cd M_-M_K-/
-python setup.py build
-python setup.py install
-'import mk_mass'
+To install the python version:  
+git clone https://github.com/awmann/M_-M_K-  
+cd M_-M_K-/  
+python setup.py build  
+python setup.py install  
 
 Maybe you want to know the mass of GJ1214 (python syntax):
 ```
