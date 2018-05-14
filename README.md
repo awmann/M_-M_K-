@@ -13,7 +13,17 @@ Restrict use to stars with 4<MK<11 (and probably 4.5<MK<10.5), on the main-seque
 Check out the paper:
 https://github.com/awmann/masses_paper
 
-Let's say you want to know the mass of Trappist-1:
+The code is available in IDL and python.
+
+To install the python version do the following after cloning the repository:
+
+cd to the cloned repository directoy
+python setup.py build
+python setup.py install
+
+you should then be able to import mk_mass whenever you like. 
+
+Let's say you want to know the mass of Trappist-1 (IDL syntax):
 ```
 k = 10.296 
 ek = 0.023
@@ -28,19 +38,9 @@ cghistoplot,mass,/outline,thick=4,xtitle='Mass (Solar masses)'
   ![Histogram of the posterior](img/trappist_mass.png)
 
 
-
 The success of the associated paper depends on the ease of use of this software, so please feel free to send questions/suggestions to mann.andrew.w [at] gmail.com (or open an issue). 
 
 
-The code is available in IDL and python.
-
-To install the python version do the following after cloning the repository:
-
-cd to the cloned repository directoy
-python setup.py build
-python setup.py install
-
-you should then be able to import mk_mass whenever you like
 
 
  
