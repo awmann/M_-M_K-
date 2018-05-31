@@ -86,28 +86,32 @@ function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=
   endif
 
   if n_elements(post) eq 0 then begin
-     if n_elements(feh) ne 0 then post = mrdfits('resources/Mk-M_5_feh_trim.fits',/silent) else $
-        post = mrdfits('resources/Mk-M_5_trim.fits',/silent)
+     if n_elements(feh) ne 0 then post = mrdfits('resources/Mk-M_8_feh_trim.fits',/silent) else $
+        post = mrdfits('resources/Mk-M_7_trim.fits',/silent)
   endif
   ntot = n_elements(post[0,*])
-  a = (post[0,*])[*]
-  b = (post[1,*])[*]
-  c = (post[2,*])[*]
-  d = (post[3,*])[*]
+  a0 = (post[0,*])[*]
+  a1 = (post[1,*])[*]
+  a2 = (post[2,*])[*]
+  a3 = (post[3,*])[*]
+  a4 = (post[4,*])[*]
+  a5 = (post[5,*])[*]
   if n_elements(feh) eq 0 then begin
-     e = (post[4,*])[*]
-     f = 0d0*e
+     sige = exp((post[6,*])[*])
+     f = 0d0*a0
      feh = 0d0
   endif else begin
-     e = 0d0*d
-     f = (post[4,*])[*]
+     f = (post[6,*])[*]
+     sige = exp((post[7,*])[*])
   endelse
   m = dblarr(n_elements(k))
-  kmag = k+ek*randomn(seed,n_elements(a))
-  distance = dist + edist*randomn(seed,n_elements(a))
+  kmag = k+ek*randomn(seed,n_elements(a0))
+  distance = dist + edist*randomn(seed,n_elements(a0))
   mk = kmag-5d0*(alog10(distance)-1d0)
   zp = 7.5d0
-  mass = (10d0^(a+b*(mk-zp)+c*(mk-zp)^2d0+d*(mk-zp)^3d0+e*(mk-zp)^4d0))*(1d0+feh*f)
+  mass = (10d0^(a0+a1*(mk-zp)+a2*(mk-zp)^2d0+a3*(mk-zp)^3d0+a4*(mk-zp)^4d0+a5*(mk-zp)^5d0))*(1d0+feh*f)
+  ;;mass += sige*mass ;;randomn(seed,n_elements(a0))
+  mass += median(sige)*mass*randomn(seed,n_elements(a0))
   if oned eq 1 then m = [mean(mass),stdev(mass)] else $
      m = mass
   l = where(finite(m) eq 0)
@@ -132,7 +136,7 @@ PRO tester
   edist = 0.018710230
   mass = mk_mass(k,dist,ek,edist)
   print,'Trappist-1:'
-  print,'Our mass:'+String(median(mass),format="(D6.3)")+'+/-'+string(stdev(mass),format="(D6.3)")
+  print,'Our mass:'+String(median(mass),format="(D6.3)")+'+/-'+string(stdev(mass),format="(D6.3)")+' ('+strtrim(string(100*stdev(mass)/median(mass),format="(D4.1)"),2)+'% error)'
   print,'Van Grootel et al: 0.089+/-0.006'
   mVG = 0.089+0.006*randomn(seed,n_elements(mass))
   cghistoplot,mass,/outline,thick=3,datacolorname='red',binsize=0.0001,xtitle='Mass (Solar)'
@@ -163,8 +167,8 @@ PRO tester
   legend,['Our Mass','Our Mass with [Fe/H]','Anglada-Escude et al.'],color=cgcolor(['red','orange','blue']),linestyle=0,thick=3,/top,/right,textcolor=cgcolor(['red','orange','blue'])
   print,'Diff = '+string(median(mass-mAE),format="(D6.3)")
   print,'Sig = '+string(mean(mass-mAE)/stdev(mass-mAE),format="(D6.3)")
-  print,'Diff(feh) = '+string(median(mass_feh-mAE),format="(D6.3)")
-  print,'Sig(feh = '+string(mean(mass_feh-mAE)/stdev(mass_Feh-mAE),format="(D6.3)")
+  print,'Diff(with feh) = '+string(median(mass_feh-mAE),format="(D6.3)")
+  print,'Sig(with feh) = '+string(mean(mass_feh-mAE)/stdev(mass_Feh-mAE),format="(D6.3)")
 
   ;;stop
   ;; GU Boo
@@ -200,11 +204,11 @@ PRO tester
   
   ;; Let's say we have some assymetric posterior on distance, and want a posterior on mass
   ;; note this runs really slowly. Maybe not so practical!
-  post = mrdfits('resources/Mk-M_5_trim.fits',/silent)
+  post = mrdfits('resources/Mk-M_7_trim.fits',/silent)
   tmp = findgen(n_elements(post[0,*]))
   l = wherE(tmp mod 100 eq 1)
   post = post[*,l] ;; runs a bit faster if you trim this down.
-  num = 1d3
+  num = 1d4
   logdist = generatearray(1.15,1.3,num)
   dist = 10.0^logdist
   k = 8.0+0.01*randomn(seed,num)

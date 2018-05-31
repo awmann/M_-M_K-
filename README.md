@@ -13,7 +13,7 @@ Restrict use to stars with 4<MK<11 (and probably 4.5<MK<10.5), on the main-seque
 Check out the paper:
 https://github.com/awmann/masses_paper
 
-The code is available in IDL and python.
+The code is available in IDL and python (python version does not have sigma_e implementation yet).
 
 To install the python version:  
 git clone https://github.com/awmann/M_-M_K-  
@@ -45,7 +45,7 @@ mass = mk_mass(k,dist,ek,edist)
 print,'The mass of Trappist-1 is '+String(median(mass),format="(D6.4)")+'+/-'+string(stdev(mass),format="(D6.4)")+' M_sun'
 cghistoplot,mass,/outline,thick=4,xtitle='Mass (Solar masses)'
   
-  "The mass of Trappist-1 is  0.0903+/- 0.0039 M_sun"
+  "The mass of Trappist-1 is  0.0894+/- 0.0022 M_sun"
 ```
   ![Histogram of the posterior](img/trappist_mass.png)
 
