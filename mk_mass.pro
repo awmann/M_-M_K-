@@ -102,7 +102,7 @@ function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=
      feh = 0d0
   endif else begin
      f = (post[6,*])[*]
-     sige = exp((post[7,*])[*])
+     sige = exp((post[7,*])[*]) ;; 
   endelse
   m = dblarr(n_elements(k))
   kmag = k+ek*randomn(seed,n_elements(a0))
@@ -208,7 +208,7 @@ PRO tester
   tmp = findgen(n_elements(post[0,*]))
   l = wherE(tmp mod 100 eq 1)
   post = post[*,l] ;; runs a bit faster if you trim this down.
-  num = 1d4
+  num = 1d3
   logdist = generatearray(1.15,1.3,num)
   dist = 10.0^logdist
   k = 8.0+0.01*randomn(seed,num)
@@ -226,7 +226,7 @@ PRO tester
      ;;   print,(systime(/seconds)-start)/i,n_elements(mass)
      ;;endif
   endfor
-  cghistoplot,mass,/outline,thick=3,xtitle='Mass (Solar)' ;; assymetric distribution in mass, as expected
+  cghistoplot,mass,/outline,thick=3,xtitle='Mass (Solar)' ;; assymetric (non-Gaussian) distribution in mass, as expected
   
 END
 
