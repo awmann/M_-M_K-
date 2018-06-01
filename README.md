@@ -42,10 +42,10 @@ ek = 0.023
 dist = 1000d0/80.4512 ;; Gaia DR2 parallax
 edist = (0.1211/80.4512)*dist
 mass = mk_mass(k,dist,ek,edist)
-print,'The mass of Trappist-1 is '+String(median(mass),format="(D6.4)")+'+/-'+string(stdev(mass),format="(D6.4)")+' M_sun, a '+string(100.*stdev(mass)/median(mass),format="(D5.1)")+'% error'
+print,'The mass of Trappist-1 is '+String(median(mass),format="(D6.4)")+'+/-'+string(stdev(mass),format="(D6.4)")+' M_sun, a '+strtrim(string(100.*stdev(mass)/median(mass),format="(D5.1)”),2)+’% error'
 cghistoplot,mass,/outline,thick=4,xtitle='Mass (Solar masses)'
   
-  "The mass of Trappist-1 is  0.0894+/- 0.0022 M_sun"
+  "The mass of Trappist-1 is 0.0893+/-0.0022 M_sun, a 2.5% error"
 ```
   ![Histogram of the posterior](img/trappist_mass.png)
 
