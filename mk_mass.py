@@ -105,28 +105,34 @@ def posterior(K,dist,ek=0.0,edist=0.0,feh=None,efeh=None,oned=False,silent=False
     ##Unpack the relation
     if post == None:
         if feh != None:
-            post = fits.open(datapath +'/Mk-M_5_feh_trim.fits')[0].data
-        else: post = fits.open(datapath +'/Mk-M_5_trim.fits')[0].data
+            post = fits.open(datapath +'/Mk-M_8_feh_trim.fits')[0].data
+        else: post = fits.open(datapath +'/Mk-M_7_trim.fits')[0].data
     ntot = post.shape[0]
-    a    = post[:,0]
-    b    = post[:,1]
-    c    = post[:,2]
-    d    = post[:,3]
+    a0    = post[:,0]
+    a1    = post[:,1]
+    a2    = post[:,2]
+    a3    = post[:,3]
+    a4    = post[:,4]
+    a5    = post[:,5]
     if feh == None:
-        e   = post[:,4]
-        f   = 0.0*e
+        sige   = np.exp(post[:,6])
+        f   = a0*0.0
         feh = 0.0
     else:
         e = 0.0*d
-        f = post[:,4]
+        f = post[:,6]
+        sige = np.exp(post[:,7])
     ##Compute the posterior
     m        = 0.0
-    kmag     = np.random.normal(K,ek,a.shape[0])
-    distance = np.random.normal(dist,edist,a.shape[0])   
+    kmag     = np.random.normal(K,ek,a0.shape[0])
+    distance = np.random.normal(dist,edist,a0.shape[0])   
     mk       = kmag + 5 - 5*np.log10(distance)
     zp       = 7.5
-    m        = (10.0**(a+b*(mk-zp)+c*(mk-zp)**2.0+d*(mk-zp)**3.0+e*(mk-zp)**4.0))*(1.0+feh*f)
-    if oned == True: m = [np.mean(mass),np.std(mass)]
+    m        = (10.0**(a0+a1*(mk-zp)+a2*(mk-zp)**2.0+a3*(mk-zp)**3.0+a4*(mk-zp)**4.0+a5*(mk-zp)**5.0))*(1.0+feh*f)
+    m       += np.median(sige)*m*np.random.normal(size=a0.shape[0])
+
+    
+    if oned == True: m = [np.mean(m),np.std(m)]
     
     if np.isnan(m).any() == True: print 'Warning, some outputs are NaNs!!?!!'
     return m
