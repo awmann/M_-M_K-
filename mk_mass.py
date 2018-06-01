@@ -119,7 +119,7 @@ def posterior(K,dist,ek=0.0,edist=0.0,feh=None,efeh=None,oned=False,silent=False
         f   = a0*0.0
         feh = 0.0
     else:
-        e = 0.0*d
+        e = 0.0*a0
         f = post[:,6]
         sige = np.exp(post[:,7])
     ##Compute the posterior
