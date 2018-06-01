@@ -13,7 +13,7 @@ Restrict use to stars with 4<MK<11 (and probably 4.5<MK<10.5), on the main-seque
 Check out the paper:
 https://github.com/awmann/masses_paper
 
-The code is available in IDL and python (python version does not have sigma_e implementation yet).
+The code is available in IDL and python.
 
 To install the python version:  
 git clone https://github.com/awmann/M_-M_K-  
