@@ -53,6 +53,8 @@ cghistoplot,mass,/outline,thick=4,xtitle='Mass (Solar masses)'
 The success of the associated paper depends on the ease of use of this software, so please feel free to send questions/suggestions to mann.andrew.w [at] gmail.com (or open an issue). 
 
 
+To do:
+-Add a /fast option: just uses the best-fit formula and the table for errors.
 
 
  
