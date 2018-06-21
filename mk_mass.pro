@@ -62,6 +62,8 @@
 
 function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=oned
 
+  path_to_posteriors = '~/Dropbox/MMK/resources/'
+
   if n_elements(oned) eq 0 then oned = 0
   if n_elements(silent) eq 0 then silent = 0
   if n_elements(ek) eq 0 then begin
@@ -91,8 +93,8 @@ function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=
   endif
   
   if n_elements(post) eq 0 then begin
-     if n_elements(feh) ne 0 then post = mrdfits('resources/Mk-M_8_feh_trim.fits',/silent) else $
-        post = mrdfits('resources/Mk-M_7_trim.fits',/silent)
+     if n_elements(feh) ne 0 then post = mrdfits(path_to_posteriors+'Mk-M_8_feh_trim.fits',/silent) else $
+        post = mrdfits(path_to_posteriors+'Mk-M_7_trim.fits',/silent)
   endif
   ntot = n_elements(post[0,*])
   a0 = (post[0,*])[*]
