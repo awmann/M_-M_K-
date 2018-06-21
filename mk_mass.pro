@@ -62,7 +62,8 @@
 
 function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=oned
 
-  path_to_posteriors = '~/Dropbox/MMK/resources/'
+  ;; you might need to adjust this
+  path_to_posteriors = './resources/'
 
   if n_elements(oned) eq 0 then oned = 0
   if n_elements(silent) eq 0 then silent = 0
