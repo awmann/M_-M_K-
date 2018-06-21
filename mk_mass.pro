@@ -84,7 +84,12 @@ function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=
      if silent eq 0 then print,'If [Fe/H] is provided as an array, it must have the same size as other parameters'
      return,-1
   endif
-
+  mk_tmp = k-5d0*(alog10(dist)-1d0)
+  if mk_tmp gt 11.5 or mk_tmp lt 4.0 then begin
+     if silent eq 0 then print,'Beyond edge of relation'
+     return,!Values.F_NAN
+  endif
+  
   if n_elements(post) eq 0 then begin
      if n_elements(feh) ne 0 then post = mrdfits('resources/Mk-M_8_feh_trim.fits',/silent) else $
         post = mrdfits('resources/Mk-M_7_trim.fits',/silent)
@@ -108,6 +113,10 @@ function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=
   kmag = k+ek*randomn(seed,n_elements(a0))
   distance = dist + edist*randomn(seed,n_elements(a0))
   mk = kmag-5d0*(alog10(distance)-1d0)
+
+  ;; output a warning if near the edges of the relation
+  if (mean(mk) gt 10.5 or mean(mk) lt 4.5) and silent eq 0 then print,'Warning, near the edges of the relation'
+  
   zp = 7.5d0
   mass = (10d0^(a0+a1*(mk-zp)+a2*(mk-zp)^2d0+a3*(mk-zp)^3d0+a4*(mk-zp)^4d0+a5*(mk-zp)^5d0))*(1d0+feh*f)
   ;;mass += sige*mass ;;randomn(seed,n_elements(a0))
@@ -115,7 +124,9 @@ function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=
   if oned eq 1 then m = [mean(mass),stdev(mass)] else $
      m = mass
   l = where(finite(m) eq 0)
-  if l[0] ne -1 then print,'warning, some output is NaN'
+  bad = where(mk gt 11.5 or mk lt 4.0)
+  if bad[0] ne -1 then mass[bad] = !Values.F_NAN
+  if l[0] ne -1 and silent eq 0 then print,'warning, some output is NaN (points beyond edge of relation?)'
   return,m[*]
   
 end
