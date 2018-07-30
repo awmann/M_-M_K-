@@ -52,6 +52,7 @@
 ;          IDL> cghistoplot,mass,/outline
 ;
 ; MODIFICATION HISTORY:
+;          Jun 21 2018: Added sigma_e, edge issues by A. Mann
 ;          May 10 2018: Ported from scratch code by A. Mann
 ;          May 14 2018: Added testing modules. A. Mann
 ;         
