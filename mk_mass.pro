@@ -24,7 +24,9 @@
 ;                is provied, assumed to be 0
 ;          post: MCMC posterior. Will read it in if not provided. This is
 ;                useful if you need to run a lot of values (so it does not
-;                need to be read in many times). 
+;                need to be read in many times).
+;          sige_u: This is for adjusting the value of sigma_e. Probably
+;                don't adjust this unless you know what you are doing. 
 ;
 ; KEYWORD PARAMETERS:
 ;          oned:  Returns a simple 1D error instead of a posterior
@@ -52,6 +54,7 @@
 ;          IDL> cghistoplot,mass,/outline
 ;
 ; MODIFICATION HISTORY:
+;          Aug 20 2018: Allow for user defined sige by A. Mann
 ;          Jun 21 2018: Added sigma_e, edge issues by A. Mann
 ;          May 10 2018: Ported from scratch code by A. Mann
 ;          May 14 2018: Added testing modules. A. Mann
@@ -61,10 +64,12 @@
 ;
 ;-
 
-function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=oned
+function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=oned,sige_u=sige_u
 
-  ;; you might need to adjust this
+  ;; you might need to adjust this depending on where you install
+  ;; this, and if you want to call the code from another location. 
   path_to_posteriors = './resources/'
+  path_to_posteriors = '~/Dropbox/MMK/resources/'
 
   if n_elements(oned) eq 0 then oned = 0
   if n_elements(silent) eq 0 then silent = 0
@@ -89,7 +94,7 @@ function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=
      return,-1
   endif
   mk_tmp = k-5d0*(alog10(dist)-1d0)
-  if mk_tmp gt 11.5 or mk_tmp lt 4.0 then begin
+  if mk_tmp gt 11.6 or mk_tmp lt 3.75 then begin
      if silent eq 0 then print,'Beyond edge of relation'
      return,!Values.F_NAN
   endif
@@ -113,6 +118,8 @@ function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=
      f = (post[6,*])[*]
      sige = exp((post[7,*])[*]) ;; 
   endelse
+  if n_elements(sige_u) eq 1 then sige = sige_u ;; user defined sig_e value. This is for testing what happens when we fiddle with this (e.g., how does chi^2 change).
+  
   m = dblarr(n_elements(k))
   kmag = k+ek*randomn(seed,n_elements(a0))
   distance = dist + edist*randomn(seed,n_elements(a0))
@@ -193,7 +200,7 @@ PRO tester
   edist = (0.0159/6.1468)*dist
   ktot = 10.222
   delk = 0.1
-  fluxratio = 10d0^(0.05/2.5)
+  fluxratio = 10d0^(delk/2.5)
   del_eps = 2.5*alog10(1d0+1d0/fluxratio)
   ka = del_eps+ktot
   kb = ka + delk
