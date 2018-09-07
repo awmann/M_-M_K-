@@ -105,7 +105,9 @@ function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=
 
   ;; fast mode!
   if fast eq 1 then begin
-     ;; read in the table
+     ;; read in the table;; should this just be hard-coded for speed?
+     ;; reading files over and over if someone runs this on 100,000
+     ;; stars... hrmmm
      readcol,path_to_posteriors+'table.txt',mkinterpol,errinterpol,format='d,d',/silent
      a0 = -0.63770
      a1 = -0.21125
@@ -117,7 +119,7 @@ function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=
      feh = 0d0
      tmp = k-5d0*(alog10(dist)-1d0)
      err2 = interpol(errinterpol,mkinterpol,tmp)
-     nmonte = 1d5
+     nmonte = 1d5 ;; we should swap this to derivatives from MC errors. It's needlessly slow to generate 1d5 instances!
   endif else begin
      
      if n_elements(post) eq 0 then begin
@@ -140,7 +142,7 @@ function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=
         f = (post[6,*])[*]
         sige = exp((post[7,*])[*]) ;; 
      endelse
-     if n_elements(sige_u) eq 1 then sige = sige_u ;; user defined sig_e value. This is for testing what happens when we fiddle with this (e.g., how does chi^2 change).
+     if n_elements(sige_u) eq 1 then sige = sige_u ;; user defined sig_e value. This is for testing what happens when we fiddle with this (e.g., how does chi^2 change). Maybe if you are skeptical of our ~2% errors. 
   endelse
 
   m = dblarr(n_elements(k))

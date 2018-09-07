@@ -54,7 +54,7 @@ The success of the associated paper depends on the ease of use of this software,
 
 
 To do:
--Add a /fast option: just uses the best-fit formula and the table for errors.
+-make the fast mode a little faster by switching errors to derivatives from MC. 
 
 
  
