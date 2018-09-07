@@ -28,7 +28,8 @@
 ;          sige_u: This is for adjusting the value of sigma_e. Probably
 ;                don't adjust this unless you know what you are
 ;                doing.
-;          fast: Doesn't read in posteriors, just uses 1D errors.
+;          fast: Doesn't read in posteriors, just uses 1D errors. Note
+;                that this method produces slightly less accurate uncertainties
 ;
 ; KEYWORD PARAMETERS:
 ;          oned:  Returns a simple 1D error instead of a posterior
@@ -38,7 +39,7 @@
 ; OUTPUTS:
 ;          mass: if /oned is set this is a 2-element array containing the
 ;                median and standard deviation of the mass posterior. Else
-;                this contains the posterior on mass of 1600000
+;                this contains the posterior on mass of 800000
 ;                elements (the length of the trimmed posterior). 
 ;
 ; EXAMPLE (see tester below for more examples):
