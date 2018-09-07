@@ -2,7 +2,7 @@
 
 This code is meant to provide realistic masses and uncertainties of (single) low-mass stars given a user-provided 2MASS Ks and distance (and uncertainties). 
 
-The code will read in the included posterior from Mann et al. (soon, be patient) to estimate the error arising from scatter in the relation itself. The output is a posterior on stellar mass (Solar units). You can also request 1D (mean and sigma) errors if those are preferred.
+The code will read in the included posterior from Mann et al. (soon, be patient) to estimate the error arising from scatter in the relation itself. The output is a posterior on stellar mass (Solar units). You can also request 1D (mean and sigma) errors if those are preferred. Note that to run the code you probably will need to update the ‘path_to_posteriors’ variable in the code. 
 
 You can include [Fe/H] if it is known. In this scenario the code will use a Mk-Mass-[Fe/H] relation. Note that the [Fe/H] term is technically not statistically significant. So this is mostly for illustrative purposes or tests on stars with extreme metallicities (e.g., subdwarfs). 
 
@@ -31,8 +31,8 @@ edist = 0.13
 feh,efeh=0.3,0.1
 mass      = posterior(k,dist,ek,edist)
 mass_feh  = posterior(k,dist,ek,edist,feh,efeh)
-print np.median(mass),np.std(mass)
-	0.180854501624 0.00615326324807
+print ("Mass=%6.4f+/-%6.4f" % (np.median(mass),np.std(mass)))
+	Mass=0.1794+/-0.0045
 ```
 
 Let's say you want to know the mass of Trappist-1 (IDL syntax):
@@ -45,7 +45,7 @@ mass = mk_mass(k,dist,ek,edist)
 print,'The mass of Trappist-1 is '+String(median(mass),format="(D6.4)")+'+/-'+string(stdev(mass),format="(D6.4)")+' M_sun, a '+strtrim(string(100.*stdev(mass)/median(mass),format="(D5.1)”),2)+’% error'
 cghistoplot,mass,/outline,thick=4,xtitle='Mass (Solar masses)'
   
-  "The mass of Trappist-1 is 0.0893+/-0.0022 M_sun, a 2.5% error"
+  "The mass of Trappist-1 is 0.0896+/-0.0022 M_sun, a 2.5% error"
 ```
   ![Histogram of the posterior](img/trappist_mass.png)
 

@@ -26,7 +26,9 @@
 ;                useful if you need to run a lot of values (so it does not
 ;                need to be read in many times).
 ;          sige_u: This is for adjusting the value of sigma_e. Probably
-;                don't adjust this unless you know what you are doing. 
+;                don't adjust this unless you know what you are
+;                doing.
+;          fast: Doesn't read in posteriors, just uses 1D errors.
 ;
 ; KEYWORD PARAMETERS:
 ;          oned:  Returns a simple 1D error instead of a posterior
@@ -54,6 +56,7 @@
 ;          IDL> cghistoplot,mass,/outline
 ;
 ; MODIFICATION HISTORY:
+;          Sep 06 2018: Fast mode by A. Mann
 ;          Aug 20 2018: Allow for user defined sige by A. Mann
 ;          Jun 21 2018: Added sigma_e, edge issues by A. Mann
 ;          May 10 2018: Ported from scratch code by A. Mann
@@ -61,18 +64,19 @@
 ;         
 ;
 ;If you use this code, please cite the relevant paper:
-;
+; 
 ;-
 
-function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=oned,sige_u=sige_u
+function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=oned,sige_u=sige_u,fast=fast
 
   ;; you might need to adjust this depending on where you install
   ;; this, and if you want to call the code from another location. 
-  path_to_posteriors = './resources/'
+  ;;path_to_posteriors = './resources/'
   path_to_posteriors = '~/Dropbox/MMK/resources/'
 
   if n_elements(oned) eq 0 then oned = 0
   if n_elements(silent) eq 0 then silent = 0
+  if n_elements(fast) eq 0 then fast = 0
   if n_elements(ek) eq 0 then begin
      if silent eq 0 then print,'Warning, assuming no error on K, mass errors underestimated'
      ek = 0d0
@@ -98,31 +102,50 @@ function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=
      if silent eq 0 then print,'Beyond edge of relation'
      return,!Values.F_NAN
   endif
-  
-  if n_elements(post) eq 0 then begin
-     if n_elements(feh) ne 0 then post = mrdfits(path_to_posteriors+'Mk-M_8_feh_trim.fits',/silent) else $
-        post = mrdfits(path_to_posteriors+'Mk-M_7_trim.fits',/silent)
-  endif
-  ntot = n_elements(post[0,*])
-  a0 = (post[0,*])[*]
-  a1 = (post[1,*])[*]
-  a2 = (post[2,*])[*]
-  a3 = (post[3,*])[*]
-  a4 = (post[4,*])[*]
-  a5 = (post[5,*])[*]
-  if n_elements(feh) eq 0 then begin
-     sige = exp((post[6,*])[*])
-     f = 0d0*a0
+
+  ;; fast mode!
+  if fast eq 1 then begin
+     ;; read in the table
+     readcol,path_to_posteriors+'table.txt',mkinterpol,errinterpol,format='d,d',/silent
+     a0 = -0.63770
+     a1 = -0.21125
+     a2 = -5.0137d-3
+     a3 = 8.6686d-3
+     a4 = 5.7932d-4
+     a5 = -2.7138d-4
+     f = 0.0
      feh = 0d0
+     tmp = k-5d0*(alog10(dist)-1d0)
+     err2 = interpol(errinterpol,mkinterpol,tmp)
+     nmonte = 1d5
   endif else begin
-     f = (post[6,*])[*]
-     sige = exp((post[7,*])[*]) ;; 
+     
+     if n_elements(post) eq 0 then begin
+        if n_elements(feh) ne 0 then post = mrdfits(path_to_posteriors+'Mk-M_8_feh_trim.fits',/silent) else $
+           post = mrdfits(path_to_posteriors+'Mk-M_7_trim.fits',/silent)
+     endif
+     ntot = n_elements(post[0,*])
+     a0 = (post[0,*])[*]
+     a1 = (post[1,*])[*]
+     a2 = (post[2,*])[*]
+     a3 = (post[3,*])[*]
+     a4 = (post[4,*])[*]
+     a5 = (post[5,*])[*]
+     nmonte = ntot
+     if n_elements(feh) eq 0 then begin
+        sige = exp((post[6,*])[*])
+        f = 0d0*a0
+        feh = 0d0
+     endif else begin
+        f = (post[6,*])[*]
+        sige = exp((post[7,*])[*]) ;; 
+     endelse
+     if n_elements(sige_u) eq 1 then sige = sige_u ;; user defined sig_e value. This is for testing what happens when we fiddle with this (e.g., how does chi^2 change).
   endelse
-  if n_elements(sige_u) eq 1 then sige = sige_u ;; user defined sig_e value. This is for testing what happens when we fiddle with this (e.g., how does chi^2 change).
-  
+
   m = dblarr(n_elements(k))
-  kmag = k+ek*randomn(seed,n_elements(a0))
-  distance = dist + edist*randomn(seed,n_elements(a0))
+  kmag = k+ek*randomn(seed,nmonte)
+  distance = dist + edist*randomn(seed,nmonte)
   mk = kmag-5d0*(alog10(distance)-1d0)
 
   ;; output a warning if near the edges of the relation
@@ -130,8 +153,12 @@ function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=
   
   zp = 7.5d0
   mass = (10d0^(a0+a1*(mk-zp)+a2*(mk-zp)^2d0+a3*(mk-zp)^3d0+a4*(mk-zp)^4d0+a5*(mk-zp)^5d0))*(1d0+feh*f)
-  ;;mass += sige*mass ;;randomn(seed,n_elements(a0))
-  mass += median(sige)*mass*randomn(seed,n_elements(a0))
+  if fast eq 1 then begin
+     mass += mass*(err2/100d0)*randomn(seed,nmonte)
+     stop
+  endif else begin
+     mass += median(sige)*mass*randomn(seed,nmonte)
+  endelse
   if oned eq 1 then m = [mean(mass),stdev(mass)] else $
      m = mass
   l = where(finite(m) eq 0)
