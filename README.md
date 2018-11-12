@@ -8,7 +8,7 @@ You can include [Fe/H] if it is known. In this scenario the code will use a Mk-M
 
 The code requires scalar values for K, distance, and corresponding uncertainties. If you instead of a set of values (e.g., an asymmetric or otherwise non-Gaussian posterior on distance) the suggested solution is to read in the posterior and run the code on each point separately, and then combine the resulting posteriors on mass.
 
-Restrict use to stars with 4<MK<11 (and probably 4.5<MK<10.5), on the main-sequence, and -0.6<[Fe/H]<0.4. This is roughly 0.075Msun to 0.7Msun. 
+Restrict use to stars with 4<MK<11 (and probably 4.5<MK<10.5), on the main-sequence, and -0.6<[Fe/H]<0.4. This is roughly 0.075Msun to 0.7Msun. There’s some evidence that the fit has issues with very active stars, based on a comparison to predictions from low-mass eclipsing binaries (a ~2% systematic offset). Use with caution on such systems until we have the chance to explore this issue with a larger set of data. 
 
 Check out the paper:
 https://github.com/awmann/masses_paper
@@ -32,7 +32,7 @@ feh,efeh=0.3,0.1
 mass      = posterior(k,dist,ek,edist)
 mass_feh  = posterior(k,dist,ek,edist,feh,efeh)
 print ("Mass=%6.4f+/-%6.4f" % (np.median(mass),np.std(mass)))
-	Mass=0.1794+/-0.0045
+	Mass=0.1809+/-0.0062
 ```
 
 Let's say you want to know the mass of Trappist-1 (IDL syntax):
@@ -42,10 +42,10 @@ ek = 0.023
 dist = 1000d0/80.4512 ;; Gaia DR2 parallax
 edist = (0.1211/80.4512)*dist
 mass = mk_mass(k,dist,ek,edist)
-print,'The mass of Trappist-1 is '+String(median(mass),format="(D6.4)")+'+/-'+string(stdev(mass),format="(D6.4)")+' M_sun, a '+strtrim(string(100.*stdev(mass)/median(mass),format="(D5.1)”),2)+’% error'
+print,'The mass of Trappist-1 is '+String(median(mass),format="(D6.4)")+'+/-'+string(stdev(mass),format="(D6.4)")+' M_sun, a '+strtrim(string(100.*stdev(mass)/median(mass),format="(D5.1)"),2)+'% error'
 cghistoplot,mass,/outline,thick=4,xtitle='Mass (Solar masses)'
   
-  "The mass of Trappist-1 is 0.0896+/-0.0022 M_sun, a 2.5% error"
+  "The mass of Trappist-1 is 0.0898+/-0.0023 M_sun, a 2.6% error"
 ```
   ![Histogram of the posterior](img/trappist_mass.png)
 

@@ -174,16 +174,14 @@ end
 
 
 ;; This is a small code to help test the output of the mk_mass code
-;; It just runs a few well-known systems (mostly planet hosts) and
+;; It just runs a few well-known systems and
 ;; checkes how the masses compare to semi-independent determinations
 ;; (e.g., using models, transit-fit density, etc.)
 PRO tester
 
-;; trappist-1
+  ;; trappist-1
   k = 10.296
   ek = 0.023
-  ;;dist = 12.136
-  ;;edist = 0.118
   dist = 12.42989539 ;; Gaia DR2 parallax
   edist = 0.018710230
   mass = mk_mass(k,dist,ek,edist)
@@ -197,8 +195,8 @@ PRO tester
   print,'Diff = '+string(median(mass-mVG),format="(D6.3)")
   print,'Sig = '+string(mean(mass-mVG)/stdev(mass-mVG),format="(D6.3)")
 
-  ;;stop
   
+  print,'--------'
   ;;GJ1214
   k = 8.782
   ek = 0.02
@@ -222,14 +220,16 @@ PRO tester
   print,'Diff(with feh) = '+string(median(mass_feh-mAE),format="(D6.3)")
   print,'Sig(with feh) = '+string(mean(mass_feh-mAE)/stdev(mass_Feh-mAE),format="(D6.3)")
 
+  print,'--------'
   ;;stop
   ;; GU Boo
-  ;; this is an EB with near equal-mass components, so we can roughly assume DeltaK ~ 0.1
+  ;; this is an EB with near equal-mass components, so we can roughly
+  ;; assume DeltaK = 0.13 (adopted from optical flux ratio)
   ;; has a gaia plx
   dist = 1000d0/6.1468
   edist = (0.0159/6.1468)*dist
   ktot = 10.222
-  delk = 0.1
+  delk = 0.13
   fluxratio = 10d0^(delk/2.5)
   del_eps = 2.5*alog10(1d0+1d0/fluxratio)
   ka = del_eps+ktot
@@ -251,9 +251,8 @@ PRO tester
   legend,['Our A','Our B','LR05 A','LR05 B'],color=cgcolor(['red','orange','blue','violet']),linestyle=0,thick=3,/top,/right,textcolor=cgcolor(['red','orange','blue','violet'])
   print,'Diff = '+string(median(mass_a-ma),format="(D6.3)")+', '+string(median(mass_b-mb),format="(D6.3)")
   print,'Sig = '+string(mean(mass_a-ma)/stdev(mass_a-ma),format="(D6.3)")+', '+string(mean(mass_b-mb)/stdev(mass_b-mb),format="(D6.3)")
-
-
   
+  print,'--------'
   ;; Let's say we have some assymetric posterior on distance, and want a posterior on mass
   ;; note this runs really slowly. Maybe not so practical!
   post = mrdfits('resources/Mk-M_7_trim.fits',/silent)
@@ -279,6 +278,7 @@ PRO tester
      ;;endif
   endfor
   cghistoplot,mass,/outline,thick=3,xtitle='Mass (Solar)' ;; assymetric (non-Gaussian) distribution in mass, as expected
+  ;; faster way is to do this with the /fast option, but I wrote the example before writing that fix...
   
 END
 
