@@ -158,7 +158,6 @@ function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=
   mass = (10d0^(a0+a1*(mk-zp)+a2*(mk-zp)^2d0+a3*(mk-zp)^3d0+a4*(mk-zp)^4d0+a5*(mk-zp)^5d0))*(1d0+feh*f)
   if fast eq 1 then begin
      mass += mass*(err2/100d0)*randomn(seed,nmonte)
-     stop
   endif else begin
      mass += median(sige)*mass*randomn(seed,nmonte)
   endelse

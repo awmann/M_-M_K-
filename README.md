@@ -32,7 +32,7 @@ feh,efeh=0.3,0.1
 mass      = posterior(k,dist,ek,edist)
 mass_feh  = posterior(k,dist,ek,edist,feh,efeh)
 print ("Mass=%6.4f+/-%6.4f" % (np.median(mass),np.std(mass)))
-	Mass=0.1809+/-0.0062
+	Mass=0.1803+/-0.0047
 ```
 
 Let's say you want to know the mass of Trappist-1 (IDL syntax):
