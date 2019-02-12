@@ -71,7 +71,7 @@
 function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=oned,sige_u=sige_u,fast=fast
 
   ;; you might need to adjust this depending on where you install
-  ;; this, and if you want to call the code from another location. 
+  ;; this, and if you want to call the code from another location.
   ;;path_to_posteriors = './resources/'
   path_to_posteriors = '~/Dropbox/MMK/resources/'
 

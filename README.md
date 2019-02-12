@@ -2,16 +2,17 @@
 
 This code is meant to provide realistic masses and uncertainties of (single) low-mass stars given a user-provided 2MASS Ks and distance (and uncertainties). 
 
-The code will read in the included posterior from Mann et al. (accepted) to estimate the error arising from scatter in the relation itself. The output is a posterior on stellar mass (Solar units). You can also request 1D (mean and sigma) errors if those are preferred. Note that to run the code you probably will need to update the ‘path_to_posteriors’ variable in the code. 
+The code will read in the included posterior from [this paper](https://arxiv.org/abs/1811.06938) to estimate the error arising from scatter in the relation itself. The output is a posterior on stellar mass (Solar units). You can also request 1D (mean and sigma) errors if those are preferred. 
 
-You can include [Fe/H] if it is known. In this scenario the code will use a Mk-Mass-[Fe/H] relation. Note that the [Fe/H] term is technically not statistically significant. So this is mostly for illustrative purposes. However, there are good reasons to think that metallicity starts to matter in more extreme situations (e.g., see https://arxiv.org/abs/1810.07702).
+You can include [Fe/H] if it is known. In this scenario the code will use a Mk-Mass-[Fe/H] relation. Note that the [Fe/H] term is technically not statistically significant. So this is mostly for illustrative purposes. However, there are good reasons to think that metallicity starts to matter in more extreme situations (see Section 7.5 of https://arxiv.org/abs/1810.07702).
 
 The code requires scalar values for K, distance, and corresponding uncertainties. If you instead of a set of values (e.g., an asymmetric or otherwise non-Gaussian posterior on distance) the suggested solution is to read in the posterior and run the code on each point separately, and then combine the resulting posteriors on mass.
 
-Restrict use to stars with 4<MK<11 (and probably 4.5<MK<10.5), on the main-sequence, and -0.6<[Fe/H]<0.4. This is roughly 0.075Msun to 0.7Msun. There’s some evidence that the fit has issues with very active stars, based on a comparison to predictions from low-mass eclipsing binaries (a ~2% systematic offset). Use with caution on such systems until we have the chance to explore this issue with a larger set of data (stay tuned, we are working on this). 
+Restrict use to stars with 4<MK<11 (and probably 4.5<MK<10.5), on the main-sequence, and -0.6<[Fe/H]<0.4. This is roughly 0.075Msun to 0.7Msun. The code will output a warning if you are outside the former range. There’s some evidence that the fit has issues with very active stars, based on a comparison to predictions from low-mass eclipsing binaries (a ~2% systematic offset). Use with caution on such systems until we have the chance to explore this issue with a larger set of data (in progress). 
 
-Check out the paper:
-https://github.com/awmann/masses_paper
+If you use this code, please cite [Mann et al. 2019 ApJ 871 63](https://ui.adsabs.harvard.edu/#abs/arXiv:1811.06938).
+
+You can also download the input data used to derive this relation (orbits, distances, masses, etc.) from the [ancillary folder on arXiv](https://arxiv.org/src/1811.06938v2/anc) or in the [full version from IOP](https://iopscience.iop.org/article/10.3847/1538-4357/aaf3bc/meta).  
 
 The code is available in IDL, Python 2, and python 3.  
 
@@ -20,6 +21,10 @@ git clone https://github.com/awmann/M_-M_K-
 cd M_-M_K-/  
 python setup.py build  
 python setup.py install  
+
+***To run the IDL code you should update the ‘path_to_posteriors’ variable to match your relevant path.*** Otherwise it should run with minimal dependencies (just Coyote and similar common astronomy libraries).  
+
+How to run:
 
 Maybe you want to know the mass of GJ1214 (python syntax):
 ```
@@ -55,7 +60,8 @@ The success of the associated paper depends on the ease of use of this software,
 
 To do:
 -make the fast mode a little faster by switching errors to derivatives from MC. 
--add activity fit options (kinda gotta do the analysis here first, so don't hold your breath on that one). 
+-add activity fit options (analysis in progress).
+-Add radius calculations from 2015 paper (need to solve for covariance terms first).  
 
 
  
