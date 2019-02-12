@@ -143,7 +143,7 @@ function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=
         f = (post[6,*])[*]
         sige = exp((post[7,*])[*]) ;; 
      endelse
-     if n_elements(sige_u) eq 1 then sige = sige_u ;; user defined sig_e value. This is for testing what happens when we fiddle with this (e.g., how does chi^2 change). Maybe if you are skeptical of our ~2% errors. 
+     if n_elements(sige_u) eq 1 then sige = sige_u ;; user defined sig_e value. This is for testing what happens when we fiddle with this (e.g., how does chi^2 change). Maybe if you are skeptical of our ~2% errors or you are working on young stars, etc.
   endelse
 
   m = dblarr(n_elements(k))
@@ -151,8 +151,10 @@ function mk_mass,k,dist,ek,edist,feh=feh,efeh=efeh,post=post,silent=silent,oned=
   distance = dist + edist*randomn(seed,nmonte)
   mk = kmag-5d0*(alog10(distance)-1d0)
 
-  ;; output a warning if near the edges of the relation
-  if (mean(mk) gt 10.5 or mean(mk) lt 4.5) and silent eq 0 then print,'Warning, near the edges of the relation'
+  ;; output a warning if posterior over the edges of the relation
+  ll = where(mk lt 4.0 or mk gt 11)
+  if n_elements(ll) gt 1 then print,'Warning, '+strtrim(string(100*(n_elements(ll)*1d0)/(n_elements(mk)*1d0),format="(D4.2)"),2)+'% of posterior beyond relation edge.'
+  ;;if (mean(mk) gt 10.5 or mean(mk) lt 4.5) and silent eq 0 then print,'Warning, near the edges of the relation'
   
   zp = 7.5d0
   mass = (10d0^(a0+a1*(mk-zp)+a2*(mk-zp)^2d0+a3*(mk-zp)^3d0+a4*(mk-zp)^4d0+a5*(mk-zp)^5d0))*(1d0+feh*f)
