@@ -58,10 +58,10 @@ cghistoplot,mass,/outline,thick=4,xtitle='Mass (Solar masses)'
 The success of the associated paper depends on the ease of use of this software, so please feel free to send questions/suggestions to mann.andrew.w [at] gmail.com (or open an issue). 
 
 
-To do:
--make the fast mode a little faster by switching errors to derivatives from MC. 
--add activity fit options (analysis in progress).
--Add radius calculations from 2015 paper (need to solve for covariance terms first).  
+To do:  
+-make the fast mode a little faster by switching errors to derivatives from MC.  
+-add activity fit options (analysis in progress).  
+-Add radius calculations from 2015 paper (need to solve for covariance terms first).   
 
 
  
