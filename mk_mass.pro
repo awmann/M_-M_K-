@@ -51,12 +51,19 @@
 ;          IDL> mass = mk_mass(k,dist,ek,edist)
 ;          IDL> print,median(mass),stdev(mass)
 ;    If you have a posterior on K and distance instead of 1D errors
-;          IDL> post = mrdfits('',/silent)
+;    Note that this will run very slowly because it makes the array
+;    very large (sampling the full posterior each time). 
+;    See the example inside the tester code for more details.
+;          IDL> post = mrdfits('resources/Mk-M_7_trim.fits',/silent)
 ;          IDL> mass = []
+;          IDL> k = generatearray(8.7,8.8,100)*1d0
+;          IDL> dist = 14.5d0 + 0.2*randomn(seed,n_elements(k))
 ;          IDL> for i = 0,n_elements(k)-1 do mass = [mass,mk_mass(k[i],dist[i],0d0,0d0,post=post)]
 ;          IDL> cghistoplot,mass,/outline
 ;
 ; MODIFICATION HISTORY:
+;          Aug 01 2019: Fixing some documentation issues with the
+;          posterior running option by A. Mann
 ;          Sep 06 2018: Fast mode by A. Mann
 ;          Aug 20 2018: Allow for user defined sige by A. Mann
 ;          Jun 21 2018: Added sigma_e, edge issues by A. Mann
@@ -260,7 +267,7 @@ PRO tester
   tmp = findgen(n_elements(post[0,*]))
   l = wherE(tmp mod 100 eq 1)
   post = post[*,l] ;; runs a bit faster if you trim this down.
-  num = 1d3
+  num = 1d4
   logdist = generatearray(1.15,1.3,num)
   dist = 10.0^logdist
   k = 8.0+0.01*randomn(seed,num)
